@@ -1,38 +1,40 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#Linear, Bayesian, Multilayer Perceptron (Neural Nets), SVM (super vector
-#machine), Random Forest, Decision Table
+# Linear, Bayesian, Multilayer Perceptron (Neural Nets), SVM (super vector
+# machine), Random Forest, Decision Table
 import numpy as np
 import pandas as pd
 import os
-
-from sklearn.model_selection import train_test_split 
-from sklearn.preprocessing import StandardScaler    
-from sklearn.metrics import roc_curve,auc,confusion_matrix
-from sklearn.utils import shuffle
 import matplotlib.pyplot as plt
 
-from sklearn.neighbors import KNeighborsClassifier 
-from sklearn.ensemble import RandomForestClassifier 
-# LDC:
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.preprocessing import StandardScaler    
+from sklearn.metrics import roc_curve, auc, confusion_matrix
+from sklearn.utils import shuffle
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+
+# K Neighbors
+knb = KNeighborsClassifier()
+
+# LDC:
 ldc = LinearDiscriminantAnalysis()
 
 # Bayesian:
-from sklearn.naive_bayes import GaussianNB
 gnb = GaussianNB()
 
 # Multilayer Perceptron
-from sklearn.neural_network import MLPClassifier
 mlp = MLPClassifier()
 
-# SVM
-from sklearn.svm import SVC
+# SVM:
 svm = SVC()
 
 # Random Forest
-from sklearn.ensemble import RandomForestClassifier 
 rndf = RandomForestClassifier()
 
 df = pd.read_csv(os.path.join('ds_Zika.csv'))
@@ -51,17 +53,17 @@ y = df['Output']
 Xdata = X.values
 Ydata = y.values
 
-from sklearn.model_selection import cross_val_score
-
-score_ldc = cross_val_score(ldc, Xdata, Ydata, cv=5)
-score_gnb = cross_val_score(gnb, Xdata, Ydata, cv=5)
-score_mlp = cross_val_score(mlp, Xdata, Ydata, cv=5)
-score_svm = cross_val_score(svm, Xdata, Ydata, cv=5)
-score_rndf = cross_val_score(rndf, Xdata, Ydata, cv=5)
-import numpy as np
-print("LDC:",np.mean(score_ldc),np.std(score_ldc))
-print("GNB:",np.mean(score_gnb),np.std(score_gnb))
-print("MLP:",np.mean(score_mlp),np.std(score_mlp))
-print("SVM:",np.mean(score_svm),np.std(score_svm))
-print("RNDF:",np.mean(score_rndf),np.std(score_rndf))
+score_knb = cross_val_score(knb, Xdata, Ydata, cv=10)
+score_ldc = cross_val_score(ldc, Xdata, Ydata, cv=10)
+score_gnb = cross_val_score(gnb, Xdata, Ydata, cv=10)
+score_mlp = cross_val_score(mlp, Xdata, Ydata, cv=10)
+score_svm = cross_val_score(svm, Xdata, Ydata, cv=10)
+score_rndf = cross_val_score(rndf, Xdata, Ydata, cv=10)
+print((6*' ')+'mean Accuracy'+(6*' ')+'standard deviation')
+print("KNB: ",np.mean(score_knb), np.std(score_knb))
+print("LDC: ",np.mean(score_ldc), np.std(score_ldc))
+print("GNB: ",np.mean(score_gnb), np.std(score_gnb))
+print("MLP: ",np.mean(score_mlp), np.std(score_mlp))
+print("SVM: ",np.mean(score_svm), np.std(score_svm))
+print("RNDF:",np.mean(score_rndf), np.std(score_rndf))
 
