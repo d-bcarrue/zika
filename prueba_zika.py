@@ -46,4 +46,4 @@ for i in range(1, 50):
     validation.append(alg.score(X_train, y_train))
     test.append(alg.score(X_test, y_test))
 
-plt.plot(range(1,50), test,range(1,50), validation)
+plt.show(plt.plot(range(1,50), test,range(1,50), validation))
