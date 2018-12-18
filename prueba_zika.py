@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import os
 
-from sklearn.model_selection import train_test_split 
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler    
 from sklearn.metrics import roc_curve,auc,confusion_matrix
 from sklearn.utils import shuffle
@@ -34,16 +34,19 @@ X_train, X_test, y_train, y_test = train_test_split(Xdata, Ydata,
                                                     stratify=Ydata)
 
 
-listaauc = []
-validation = []
-test = []
-for i in range(1, 50):
-    alg = RandomForestClassifier(max_features=47, n_estimators=10, max_depth=i)
-    alg.fit(X_train, y_train)
-    y_predicted = alg.predict(X_test)
-    fpr, tpr, threshold = roc_curve(y_test, y_predicted, pos_label=1)
-    listaauc.append(auc(fpr, tpr))
-    validation.append(alg.score(X_train, y_train))
-    test.append(alg.score(X_test, y_test))
 
-plt.show(plt.plot(range(1,50), test,range(1,50), validation))
+
+
+alg = RandomForestClassifier()
+param_grid = {'n_estimators':[5,7,10,12,16,24,35,47],'max_depth': [1,2,3,4,5,6,7,8,9,10],'min_samples_leaf':[1,2,4,6,8,10,12]}
+grid = GridSearchCV(alg,param_grid=param_grid,cv=5)
+grid.fit(X_train,y_train)
+print(grid.best_params_)
+# alg.fit(X_train, y_train)
+# y_predicted = alg.predict(X_test)
+# fpr, tpr, threshold = roc_curve(y_test, y_predicted, pos_label=1)
+# listaauc.append(auc(fpr, tpr))
+# validation.append(alg.score(X_train, y_train))
+# test.append(alg.score(X_test, y_test))
+
+# plt.show(plt.plot(range(1,50), test,range(1,50), validation))
