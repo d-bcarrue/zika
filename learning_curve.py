@@ -23,13 +23,15 @@ df = shuffle(df).reset_index(drop=True)
 
 X = df.drop('Output', axis=1)
 y = df['Output']
+Xdata = X.values
+ydata = y.values
 # learning curve calculation
 cv = ShuffleSplit(n_splits=100, test_size=0.2)
 alg = RandomForestClassifier(n_estimators=100)
 
 train_sizes = np.linspace(0.05, 1, num=20)
 train_sizes, train_scores, test_scores = learning_curve(
-        alg, X, y, cv=cv, train_sizes=train_sizes)
+        alg, Xdata, ydata, cv=cv, train_sizes=train_sizes)
 
 train_scores_mean = np.mean(train_scores, axis=1)
 train_scores_std = np.std(train_scores, axis=1)
