@@ -13,9 +13,12 @@ for i in range(len(df.columns)):
     for j in range(len(df.columns)):
             resultados[i, j] = np.mean(df.iloc[:, i] == df.iloc[:, j])
 
+print('\nPares de atributos duplicados:')
 for i, j in it.combinations(range(len(df.columns)), 2):
+    # el redonde al cuarto valor decimal no es casual, la minima diferencia que
+    # se puede obtener entre dos atributos es de 1 / 5378 = 0.0002
     if round(resultados[i, j], 4) == 1:
-        print(i, j)
+        print(str(i).ljust(3) + ': ' + str(j))
 
 plt.figure()
 x = sns.heatmap(resultados)

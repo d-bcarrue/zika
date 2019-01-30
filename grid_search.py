@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import (train_test_split, GridSearchCV,
-                                     ParameterGrid)
+                                     ParameterGrid, ShuffleSplit)
 from sklearn.neural_network import MLPClassifier
 
 df = pd.read_csv(os.path.join('ds_Zika.csv'))
@@ -38,7 +38,8 @@ alg = MLPClassifier()
 param_grid = {'solver': ['lbfgs'], 'max_iter': [500,1000,1500],
               'alpha': 10.0 ** -np.arange(1, 7), 'hidden_layer_sizes':np.arange(5, 12)}
               #'random_state':[0,1,2,3,4,5,6,7,8,9]}
-grid = GridSearchCV(alg, param_grid=param_grid, cv=10, n_jobs=-1)
+cv = ShuffleSplit(n_splits=10, test_size=0.25, random_state=1234)
+grid = GridSearchCV(alg, param_grid=param_grid, cv=cv, n_jobs=-1)
 
 # el numero de estimadores(numero de arboles en el bosque), es demasiado bajo
 # quiza probar mayor numero
@@ -46,7 +47,7 @@ grid = GridSearchCV(alg, param_grid=param_grid, cv=10, n_jobs=-1)
 #               'max_depth': range(1, 25, 2),
 #               'min_samples_leaf': range(1, 10, 2)}
 
-#grid = GridSearchCV(alg, param_grid=param_grid, cv=10)
+#grid = GridSearchCV(alg, param_grid=param_grid, cv=cv)
 grid.fit(X_train, y_train)
 print(grid.best_params_)
 print('validation accuracy:', grid.score(X_train, y_train))
@@ -58,7 +59,7 @@ c['train_test_difference'] = c.mean_train_score - c.mean_test_score
 #print(c[(c.mean_test_score >= 0.90) & (c.train_test_difference <= 0.02)][(['mean_train_score', 'mean_test_score','train_test_difference'])].sort_values('train_test_difference'))
 #i = 197
 
-c_sort = c.sort_values(by=['train_test_difference','mean_test_score'])
+c_sort = c.sort_values(by=['train_test_difference', 'mean_test_score'])
 i = best.first_valid_index()
 
 
